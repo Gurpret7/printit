@@ -9,7 +9,8 @@ import {
   Alert,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import * as Print from "expo-print";
+// import * as Print from "expo-print";
+import { printFn, selectPrinter } from "./printer";
 
 export default function ImagePick() {
   let [selectedImage, setselectedImage] = React.useState(null);
@@ -36,23 +37,12 @@ export default function ImagePick() {
     };
     console.log("options", options);
 
-    let createPDF = async (si: { uri: any } | null) => {
-      let filePath = await Print.printToFileAsync({
-        html: "<h1>PDF TEST</h1>",
-        width: 612,
-        height: 792,
-      });
-
-      console.log("PDF Generated", si);
-    };
-
     return (
       <View style={styles.container}>
         <Image
           source={{ uri: selectedImage.localUri }}
           style={styles.thumbnail}
         />
-
         {/* <View>
           <TouchableOpacity
             onPress={openImagePickerAsync}
@@ -61,21 +51,27 @@ export default function ImagePick() {
             <Text style={styles.buttonText}>Select another Images</Text>
           </TouchableOpacity>
         </View> */}
-
         <View>
           <TouchableOpacity
-            onPress={() => createPDF(selectedImage)}
+            onPress={() => printFn(selectedImage)}
             style={styles.buttonAnotherImage}
           >
             <Text style={styles.buttonText}>Print-2</Text>
+          </TouchableOpacity>
+        </View>
+        <View>
+          <TouchableOpacity
+            onPress={() => selectPrinter()}
+            style={styles.buttonAnotherImage}
+          >
+            <Text style={styles.buttonText}>Select Print</Text>
           </TouchableOpacity>
         </View>
 
         {/* <View style={styles.buttonPrint}>
           <Button title="Print" onPress={createPDF} />
         </View> */}
-
-        <Button title="Print-1" onPress={() => createPDF(selectedImage)} />
+        {/* <Button title="Print-1" onPress={() => createPDF(selectedImage)} /> */}
       </View>
     );
   }
@@ -91,19 +87,17 @@ export default function ImagePick() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#fff",
+    flex: 0.1,
+    backgroundColor: "yellow",
     alignItems: "center",
     justifyContent: "center",
   },
   button: {
     backgroundColor: "blue",
-    padding: 30,
     borderRadius: 10,
   },
   buttonAnotherImage: {
     backgroundColor: "blue",
-    padding: 10,
     borderRadius: 10,
   },
   buttonText: {
@@ -111,12 +105,11 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   thumbnail: {
-    width: 300,
-    height: 300,
+    width: 250,
+    height: 250,
     resizeMode: "contain",
   },
   buttonPrint: {
-    marginTop: 30,
     flex: 1,
     width: "80%",
   },
