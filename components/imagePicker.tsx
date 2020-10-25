@@ -9,9 +9,10 @@ import {
   Alert,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import * as Print from "expo-print";
 
 export default function ImagePick() {
-  let [selectedImage, setSelectedImage] = React.useState(null);
+  let [selectedImage, setselectedImage] = React.useState(null);
 
   let openImagePickerAsync = async () => {
     let permissionResult = await ImagePicker.requestCameraRollPermissionsAsync();
@@ -26,10 +27,25 @@ export default function ImagePick() {
       return;
     }
 
-    setSelectedImage({ localUri: pickerResult.uri });
+    setselectedImage({ localUri: pickerResult.uri });
   };
 
   if (selectedImage !== null) {
+    const options = {
+      uri: "selectedImage.localUri",
+    };
+    console.log("options", options);
+
+    let createPDF = async (si: { uri: any } | null) => {
+      let filePath = await Print.printToFileAsync({
+        html: "<h1>PDF TEST</h1>",
+        width: 612,
+        height: 792,
+      });
+
+      console.log("PDF Generated", si);
+    };
+
     return (
       <View style={styles.container}>
         <Image
@@ -37,21 +53,29 @@ export default function ImagePick() {
           style={styles.thumbnail}
         />
 
-        <View>
+        {/* <View>
           <TouchableOpacity
             onPress={openImagePickerAsync}
             style={styles.buttonAnotherImage}
           >
             <Text style={styles.buttonText}>Select another Images</Text>
           </TouchableOpacity>
+        </View> */}
+
+        <View>
+          <TouchableOpacity
+            onPress={() => createPDF(selectedImage)}
+            style={styles.buttonAnotherImage}
+          >
+            <Text style={styles.buttonText}>Print-2</Text>
+          </TouchableOpacity>
         </View>
 
-        <View style={styles.buttonPrint}>
-          <Button
-            title="Print"
-            onPress={() => Alert.alert("Print the image")}
-          />
-        </View>
+        {/* <View style={styles.buttonPrint}>
+          <Button title="Print" onPress={createPDF} />
+        </View> */}
+
+        <Button title="Print-1" onPress={() => createPDF(selectedImage)} />
       </View>
     );
   }
